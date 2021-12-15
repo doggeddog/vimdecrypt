@@ -10,6 +10,9 @@ import (
 )
 
 func Decrypt(data, passwd []byte) ([]byte, error) {
+	if len(data) < 28 {
+		return nil, errors.New("unsupported file format")
+	}
 	encryptType := data[0:12]
 	salt := data[12:20]
 	iv := data[20:28]
