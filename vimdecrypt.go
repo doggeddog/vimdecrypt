@@ -70,9 +70,6 @@ func blowfishDecryptCFB(iv, encrypted, key []byte) (decrypted []byte) {
 	block, _ := blowfish.NewCipher(key)
 	endianBlock := NewEndianCipher(block)
 
-	if len(encrypted) < blowfish.BlockSize {
-		panic("ciphertext too short")
-	}
 	decrypted = make([]byte, len(encrypted))
 	stream := cipher.NewCFBDecrypter(endianBlock, iv)
 	stream.XORKeyStream(decrypted, encrypted)
