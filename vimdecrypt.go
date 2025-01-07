@@ -2,6 +2,7 @@ package vimdecrypt
 
 import (
 	"crypto/cipher"
+	"crypto/rand"
 	"crypto/sha256"
 	"encoding/binary"
 	"errors"
@@ -16,13 +17,13 @@ func Decrypt(data, passwd []byte) ([]byte, error) {
 	encryptType := data[0:12]
 	salt := data[12:20]
 	iv := data[20:28]
-	data = data[28:]
+	encryptedData := data[28:]
 	if string(encryptType) != "VimCrypt~03!" {
 		return nil, errors.New("unsupported encrypt type")
 	}
 
 	key := hashPassword(passwd, salt)
-	return blowfishDecryptCFB(iv, data, key), nil
+	return blowfishDecryptCFB(iv, encryptedData, key), nil
 }
 
 func convertEndian(inout []byte) {
@@ -74,4 +75,37 @@ func blowfishDecryptCFB(iv, encrypted, key []byte) (decrypted []byte) {
 	stream := cipher.NewCFBDecrypter(endianBlock, iv)
 	stream.XORKeyStream(decrypted, encrypted)
 	return decrypted
+}
+
+func Encrypt(data, passwd []byte) ([]byte, error) {
+	// Generate random salt and IV
+	salt := make([]byte, 8)
+	iv := make([]byte, blowfish.BlockSize)
+	if _, err := rand.Read(salt); err != nil {
+		return nil, errors.New("failed to generate salt")
+	}
+	if _, err := rand.Read(iv); err != nil {
+		return nil, errors.New("failed to generate IV")
+	}
+
+	// Derive key from password and salt
+	key := hashPassword(passwd, salt)
+
+	// Encrypt data using Blowfish in CFB mode
+	encrypted := blowfishEncryptCFB(iv, data, key)
+
+	// Build the final output format
+	header := append([]byte("VimCrypt~03!"), salt...)
+	header = append(header, iv...)
+	return append(header, encrypted...), nil
+}
+
+func blowfishEncryptCFB(iv, plaintext, key []byte) []byte {
+	block, _ := blowfish.NewCipher(key)
+	endianBlock := NewEndianCipher(block)
+
+	encrypted := make([]byte, len(plaintext))
+	stream := cipher.NewCFBEncrypter(endianBlock, iv)
+	stream.XORKeyStream(encrypted, plaintext)
+	return encrypted
 }

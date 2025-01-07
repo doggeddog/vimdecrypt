@@ -5,6 +5,7 @@
 *.so
 *.dylib
 *.txt
+*.vim
 .DS_Store
 .idea
 
