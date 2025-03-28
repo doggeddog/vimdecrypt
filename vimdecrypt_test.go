@@ -28,7 +28,10 @@ func TestEncryptDecrypt(t *testing.T) {
 	// Check if decryption matches original plaintext
 	if !bytes.Equal(plaintext, decrypted) {
 		t.Errorf("Decrypted text does not match original.\nGot: %s\nWant: %s", decrypted, plaintext)
+	} else {
+		fmt.Println(string(decrypted))
 	}
+
 }
 
 func TestWriteFile(t *testing.T) {
