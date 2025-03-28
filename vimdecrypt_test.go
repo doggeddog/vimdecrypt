@@ -2,6 +2,7 @@ package vimdecrypt
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"os"
 	"testing"
@@ -13,6 +14,7 @@ func TestEncryptDecrypt(t *testing.T) {
 
 	// Test encryption
 	encrypted, err := Encrypt(plaintext, password)
+	fmt.Printf("encrypted: %x\n", encrypted)
 	if err != nil {
 		t.Fatalf("Encrypt failed: %v", err)
 	}
