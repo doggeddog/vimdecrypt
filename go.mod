@@ -1,6 +1,8 @@
 module github.com/doggeddog/vimdecrypt
 
-go 1.17
+go 1.22.0
+
+toolchain go1.24.1
 
 require (
 	golang.org/x/crypto v0.32.0

@@ -4,7 +4,7 @@ Golang tool for decrypting VIM encrypted files.
 
 Install:
 ```shell
-go install github.com/doggeddog/vimdecrypt/vimdecrpyt@latest
+go install github.com/doggeddog/cmd/vimdecrypt@latest
 ```
 
 Usage:
